@@ -19,6 +19,7 @@ class LoginAction extends Action
     protected function action(): Response {
         $body = $this->getBody();
         $user = $this->adminService->getByEmail($body->email);
+		//print_r(password_hash('RPNWBVZFAXwfC9AH', PASSWORD_BCRYPT));
         if(!empty($user)){
             if(password_verify($body->password, $user['password'])){
                 $user['token'] = JWT::encode(['id' => $user['id'], 'email' => $user['email']], $_ENV['JWT_SECRET_TOKEN']);
