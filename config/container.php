@@ -53,7 +53,7 @@ return [
 	},
 
 Query::class => function (ContainerInterface $c){
-	$mysql = $c->get('settings')->get('mysql');
+	$mysql = $c->get('settings')['mysql'];
 	$pdo = new PDO("mysql:dbname={$mysql['db_name']};host={$mysql['host']}", $mysql['user'],
 		$mysql['password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
 	return new Query($pdo);

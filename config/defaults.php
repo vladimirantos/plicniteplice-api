@@ -31,4 +31,11 @@ $settings['logger'] = [
 	'level' => Logger::DEBUG,
 ];
 
+$settings['mysql'] = [
+	'host' => $_ENV['MYSQL_HOST'],
+	'user' => $_ENV['MYSQL_USER'],
+	'password' => $_ENV['MYSQL_PASSWORD'],
+	'db_name' => $_ENV['MYSQL_DB_NAME'],
+];
+
 return $settings;
