@@ -8,7 +8,5 @@ use Slim\Middleware\ErrorMiddleware;
 
 return function (App $app) {
     $app->addBodyParsingMiddleware();
-	$app->add(ApiKeyMiddleware::class);
     $app->addRoutingMiddleware();
-    $app->add(BasePathMiddleware::class);
 };

@@ -38,5 +38,5 @@ return function (App $app) {
 			$group->get('/closed/count', ClosedRecipesCountAction::class);
 			$group->put('/{id}', EditRecipeAction::class);
 		});
-	});
+	})->add(new ApiKeyMiddleware($app));
 };
