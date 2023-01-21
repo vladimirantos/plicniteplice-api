@@ -2,32 +2,30 @@
 
 namespace PlicniTeplice\Recipes\Api\Core;
 
-class CorsMiddleware
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+class CorsMiddleware implements MiddlewareInterface
 {
     /**
      * Associative array with domain => [allowed methods] list
      * @var array
      */
     protected $cors = [
-        'https://erecept.plicniteplice.cz' => ['POST'],
-        'https://erecept-admin-e1e99c57.plicniteplice.cz' => ['GET', 'POST', 'PUT']
+//        'https://erecept.plicniteplice.cz' => ['POST'],
+//        'https://erecept-admin-e1e99c57.plicniteplice.cz' => ['GET', 'POST', 'PUT']
+    '*' => ['GET', 'POST', 'PUT', 'OPTIONS']
     ];
 
-    /**
-     * Middleware invokable class
-     *
-     * @param \Psr\Http\Message\ServerRequestInterface $request PSR7 request
-     * @param \Psr\Http\Message\ResponseInterface $response PSR7 response
-     * @param callable $next Next middleware
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function run($request, $response, $next)
-    {
-        $response = $next($request, $response);
-        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : 'none';
-        return $this->getResponse($response, $origin, $this->cors);
-    }
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+	{
+		$response = $handler->handle($request);
+		$origin = $_SERVER['HTTP_ORIGIN'] ?? 'none';
+		return $this->getResponse($response, $origin, $this->cors);
+	}
+
 
     /**
      * Gets allow method string of comma separated http verbs

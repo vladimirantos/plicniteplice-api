@@ -16,6 +16,11 @@ $container = $containerBuilder->build();
 
 // Create App instance
 $app = $container->get(App::class);
+
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+	return $response;
+});
+
 $app->add(new JwtAuthentication([
 	"path" => "/api", /* or ["/api", "/admin"] */
 	"ignore" => ["/api/public/"],
