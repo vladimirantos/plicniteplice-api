@@ -14,9 +14,11 @@ class CorsMiddleware implements MiddlewareInterface
      * @var array
      */
     protected $cors = [
-//        'https://erecept.plicniteplice.cz' => ['POST'],
+	    //        'https://erecept.plicniteplice.cz' => ['POST'],
 //        'https://erecept-admin-e1e99c57.plicniteplice.cz' => ['GET', 'POST', 'PUT']
-    '*' => ['GET', 'POST', 'PUT', 'OPTIONS']
+//	    '*' => ['GET', 'POST', 'PUT', 'OPTIONS']
+        'https://recepty.vladimirantos.cz' => ['POST'],
+        'https://recepty-admin.vladimirantos.cz' => ['GET', 'POST', 'PUT']
     ];
 
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
