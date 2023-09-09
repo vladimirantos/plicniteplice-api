@@ -3,6 +3,7 @@
 // Define app routes
 
 use PlicniTeplice\Recipes\Api\Actions\Admin\LoginAction;
+use PlicniTeplice\Recipes\Api\Actions\Feedback\FeedbackAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\ClosedRecipesListAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\Count\ClosedRecipesCountAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\Count\CreatedRecipesCountAction;
@@ -22,9 +23,10 @@ return function (App $app) {
     // Redirect to Swagger documentation
 	$app->get('/test', \PlicniTeplice\Recipes\Api\Actions\TestAction::class);
 
-	$app->group('/api', function (RouteCollectorProxy $group) use ($app) {
+	$app->group('/public/api', function (RouteCollectorProxy $group) use ($app) {
 		$group->group('/public', function (RouteCollectorProxy $group){
 			$group->post('/login', LoginAction::class);
+			$group->post('/feedback', FeedbackAction::class);
 			$group->group('/recipes', function (RouteCollectorProxy $group){
 				$group->post('', CreateRecipeAction::class);
 			});
