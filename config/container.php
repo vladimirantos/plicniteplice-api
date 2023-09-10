@@ -5,6 +5,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Monolog\Processor\UidProcessor;
 use PlicniTeplice\Recipes\Api\Actions\Admin\LoginAction;
+use PlicniTeplice\Recipes\Api\Actions\Feedback\FeedbackAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\ClosedRecipesListAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\Count\ClosedRecipesCountAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\Count\CreatedRecipesCountAction;
@@ -13,6 +14,7 @@ use PlicniTeplice\Recipes\Api\Actions\Recipes\CreatedRecipesListAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\CreateRecipeAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\EditRecipeAction;
 use PlicniTeplice\Recipes\Api\Actions\Recipes\RecipesListAction;
+use PlicniTeplice\Recipes\Api\Core\EmailSender;
 use PlicniTeplice\Recipes\Api\Core\Settings\ISettings;
 use PlicniTeplice\Recipes\Api\Services\AdminService;
 use PlicniTeplice\Recipes\Api\Services\RecipeService;
@@ -21,8 +23,9 @@ use Psr\Log\LoggerInterface;
 use Slim\App;
 use Slim\Container;
 use Slim\Factory\AppFactory;
+use PHPMailer\PHPMailer\PHPMailer;
 
-return [
+return array(
     // Application settings
     'settings' => fn () => require __DIR__ . '/settings.php',
 
@@ -52,6 +55,19 @@ return [
 		return $logger;
 	},
 
+	PHPMailer::class => function (ContainerInterface $c) {
+		$mailSettings = $c->get('settings')['email'];
+		$mailer = new PHPMailer(true);
+		$mailer->isSMTP();
+		$mailer->Host = $mailSettings['host'];
+		$mailer->Port = $mailSettings['port'];
+		$mailer->SMTPAuth = $mailSettings['smtpauth'];
+		$mailer->SMTPSecure = $mailSettings['smtpsecure'];
+		$mailer->Username = $mailSettings['username'];
+		$mailer->Password = $mailSettings['password'];
+		return $mailer;
+	},
+
 Query::class => function (ContainerInterface $c){
 	$mysql = $c->get('settings')['mysql'];
 	$pdo = new PDO("mysql:dbname={$mysql['db_name']};host={$mysql['host']}", $mysql['user'],
@@ -65,6 +81,11 @@ AdminService::class => function (ContainerInterface $c){
 
 RecipeService::class => function (ContainerInterface $c){
 	return new RecipeService($c->get(Query::class));
+},
+
+
+EmailSender::class => function(ContainerInterface $c) {
+	return new EmailSender($c->get(PHPMailer::class), $c->get(LoggerInterface::class));
 },
 
 LoginAction::class => function (ContainerInterface $c){
@@ -97,5 +118,9 @@ CreatedRecipesListAction::class => function (ContainerInterface $c){
 
 EditRecipeAction::class => function (ContainerInterface $c){
 	return new EditRecipeAction($c, $c->get(RecipeService::class));
-}
-];
+},
+
+FeedbackAction::class => function(ContainerInterface $c) {
+		return new FeedbackAction($c, $c->get(EmailSender::class));
+},
+);

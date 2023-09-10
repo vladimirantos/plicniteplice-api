@@ -38,4 +38,13 @@ $settings['mysql'] = [
 	'db_name' => $_ENV['MYSQL_DB_NAME'],
 ];
 
+$settings['email'] = [
+	'host' => 'mail.rozhled.cz',
+	'port' => 465,
+	'smtpauth' => 'true',
+	'smtpsecure' => 'ssl',
+	'username' => 'robot@jdulovit.cz',
+	'password' => 'V8AtEQRC'
+];
+
 return $settings;

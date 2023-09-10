@@ -3,26 +3,18 @@
 
 namespace PlicniTeplice\Recipes\Api\Core;
 
-
-use Jdulovit\Api\Service\LoggerService;
 use PHPMailer\PHPMailer\PHPMailer;
+use Psr\Log\LoggerInterface;
 
 class EmailSender
 {
-    /**
-     * @var PHPMailer
-     */
-    private $mailer;
+    private PHPMailer $mailer;
+	private LoggerInterface $logger;
 
-    /**
-     * @var LoggerService
-     */
-    private $logger;
-
-    public function __construct(PHPMailer $mailer, LoggerService $loggerService)
+    public function __construct(PHPMailer $mailer, LoggerInterface $logger)
     {
         $this->mailer = $mailer;
-        $this->logger = $loggerService;
+		$this->logger = $logger;
         $this->mailer->isHTML(true);
         $this->mailer->CharSet = 'UTF-8';
     }
@@ -58,7 +50,7 @@ class EmailSender
             $this->mailer->send();
             $this->mailer->clearAddresses();
         }catch (\Exception $e){
-            $this->logger->add("Chyba odesílání emailu", $e->getTraceAsString(), 'exception');
+			$this->logger->error("Chyba odesílání emailu: ".$e->getMessage() . ":::" . $e->getTraceAsString());
         }
     }
 }
